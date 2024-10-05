@@ -65,6 +65,5 @@ vendor/
 */**/.DS_Store
 
 web-static
-web
 /web/.next/
 /web/node_modules/
