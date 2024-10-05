@@ -1,0 +1,41 @@
+version: "3.8"
+
+services:
+  keycloak:
+    container_name: keycloak
+    image: quay.io/keycloak/keycloak:24.0.2
+    ports:
+      - "127.0.0.1:8181:8080"
+    networks:
+      - web-network
+    environment:
+      - KEYCLOAK_ADMIN=root
+      - KEYCLOAK_ADMIN_PASSWORD=root
+    restart: unless-stopped
+    command: [ "start-dev" ]
+
+  web:
+    container_name: web
+    hostname: web
+    build:
+      context: web
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_NODE_ENV=development
+      - KEYCLOAK_REALM=tgdating-realm
+      - KEYCLOAK_CLIENT_ID=tgdating-web
+      - KEYCLOAK_CLIENT_SECRET=ZDmuAw86c7GaR9xALTDfWq2HE4BwUvGJ
+      - KEYCLOAK_URL=http://127.0.0.1:8181
+      - KEYCLOAK_CONTAINER_URL=http://keycloak:8080
+      - NEXTAUTH_SECRET=Z+sE4e41PixbihRODVgCV5r7T+si1C7PteX3t1FPPfM=
+      - NEXTAUTH_URL=http://localhost:3000
+    volumes:
+      - ./web:/app
+      - /app/node_modules
+    networks:
+      - web-network
+
+networks:
+  web-network:
